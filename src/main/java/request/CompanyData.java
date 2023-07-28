@@ -3,81 +3,31 @@ package request;
 import java.util.ArrayList;
 
 public class CompanyData {
-    public class Company {
-        private final String name;
-        private final String type;
-        private final String inn;
-        private final String ogrn;
-        private final String kpp;
-        private final String phone;
-        private final String adress;
-        private final ArrayList<String> users;
+    public final String company_name;
+    public final String company_type;
+    public final ArrayList<String> company_users;
+    public final String email_owner;
 
-        public Company(String name, String type, String inn, String ogrn, String kpp, String phone, String adress, ArrayList<String> users) {
-            this.name = name;
-            this.type = type;
-            this.inn = inn;
-            this.ogrn = ogrn;
-            this.kpp = kpp;
-            this.phone = phone;
-            this.adress = adress;
-            this.users = users;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getInn() {
-            return inn;
-        }
-
-        public String getOgrn() {
-            return ogrn;
-        }
-
-        public String getKpp() {
-            return kpp;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public String getAdress() {
-            return adress;
-        }
-
-        public ArrayList<String> getUsers() {
-            return users;
-        }
+    public CompanyData(String company_name, String company_type, ArrayList<String> company_users, String email_owner) {
+        this.company_name = company_name;
+        this.company_type = company_type;
+        this.company_users = company_users;
+        this.email_owner = email_owner;
     }
 
-    public class Root{
-        private final String type;
-        private final int id_company;
-        private final Company company;
+    public String getCompany_name() {
+        return company_name;
+    }
 
-        public Root(String type, int id_company, Company company) {
-            this.type = type;
-            this.id_company = id_company;
-            this.company = company;
-        }
+    public String getCompany_type() {
+        return company_type;
+    }
 
-        public String getType() {
-            return type;
-        }
+    public ArrayList<String> getCompany_users() {
+        return company_users;
+    }
 
-        public int getId_company() {
-            return id_company;
-        }
-
-        public Company getCompany() {
-            return company;
-        }
+    public String getEmail_owner() {
+        return email_owner;
     }
 }

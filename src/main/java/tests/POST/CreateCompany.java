@@ -5,56 +5,60 @@ import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import request.RegisterData;
-import response.doRegister.SuccessRegistration;
-import response.doRegister.UnSuccessRegistration;
+import request.CompanyData;
+import response.createCompany.SuccessCreateCompany;
+import response.createCompany.UnSuccessCreateCompany;
 import specifications.Specifications;
+
+import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;
 
 public class CreateCompany {
-    @DisplayName("Test API method DoRegister (positive)")
-    @ParameterizedTest(name = "{index} => company_name={0}, company_type={1}, company_users={2}, email_owner={3}")
+    @DisplayName("Test API method CreateCompany (positive)")
+    @ParameterizedTest(name = "{index} => company_name={0}, company_type={1}, company_users={2}, email_owner={3}, error_message={4}")
     @CsvSource({
-            "verygood@mail.ru, OAO, 123",
-            "vergood@mail.ru, Tur13, 1",
+            "Алкоголики и тунедцы, ООО, verygood@mail.ru, aa+1@mail.com",
     })
-    public void seccessCreateCompanyTest(String email, String name, String password) {
+    public void seccessCreateCompanyTest(String company_name, String company_type, String users, String email_owner) {
+        ArrayList<String> company_users = new ArrayList<>();
+        company_users.add(users);
+
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
-        RegisterData user = new RegisterData(email, name, password);
-        SuccessRegistration successRegistration = given()
+        CompanyData user = new CompanyData(company_name, company_type, company_users, email_owner);
+        SuccessCreateCompany successCreateCompany = given()
                 .body(user)
                 .when()
-                .post("doregister")
+                .post("createcompany")
                 .then().log().all()
-                .extract().as(SuccessRegistration.class);
+                .extract().as(SuccessCreateCompany.class);
 
-        Assert.assertEquals(name, successRegistration.getName());
-        Assert.assertEquals("http://users.bugred.ru//tmp/default_avatar.jpg", successRegistration.getAvatar());
-        Assert.assertEquals(0, successRegistration.getBirthday());
-        Assert.assertEquals(email, successRegistration.getEmail());
-        Assert.assertEquals("", successRegistration.getGender());
-        Assert.assertEquals(0, successRegistration.getDate_start());
-        Assert.assertEquals("", successRegistration.getHobby());
+        Assert.assertEquals(company_name, successCreateCompany.getCompany().getName());
+        Assert.assertEquals(company_type, successCreateCompany.getCompany().getType());
     }
 
-    @DisplayName("Test API method DoRegister (negative)")
-    @ParameterizedTest(name = "{index} => email={0}, name={1}, password={2}, error_message")
+    @DisplayName("Test API method CreateCompany (negative)")
+    @ParameterizedTest(name = "{index} => type={0}, message={1}")
     @CsvSource({
-            "verygoodmail.ru, Tur123, 123, Некоректныйemailverygoodmail.ru",
-            "vergood@mailru, Tur123, 123, Некоректныйemailvergood@mailru",
-            "vergood@mailru, , 123, Параметрnameявляетсяобязательным!",
-            "vergood@mailru, Tur123, , Параметрpasswordявляетсяобязательным!",
+            ", ООО, verygood@mail.ru, aa+1@mail.com, Параметр company_name является обязательным!",
+            "Алкоголики и тунедцы, , verygood@mail.ru, aa+1@mail.com, Параметр company_type является обязательным!",
+            "Алкоголики и тунедцы, ООО, , aa+1@mail.com, company_users  не указаны сотрудники",
+            "Алкоголики и тунедцы, ООО, verygood@mail.ru, , Параметр email_owner является обязательным!",
     })
-    public void unSuccessCreateCompanyTest(String email, String name, String password, String errorMessage) {
+    public void unSuccessCreateCompanyTest(String company_name, String company_type, String users, String email_owner, String error_message) {
+        ArrayList<String> company_users = new ArrayList<>();
+        company_users.add(users);
+
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
-        RegisterData user = new RegisterData(email, name, password);
-        UnSuccessRegistration unSuccessReg = given()
+        CompanyData user = new CompanyData(company_name, company_type, company_users, email_owner);
+        UnSuccessCreateCompany unSuccessCreateCompany = given()
                 .body(user)
-                .post("doregister")
+                .when()
+                .post("createcompany")
                 .then().log().all()
-                .extract().as(UnSuccessRegistration.class);
-        Assert.assertEquals("error", unSuccessReg.getType());
-        Assert.assertEquals(errorMessage, unSuccessReg.getMessage().replaceAll("\\s", ""));
+                .extract().as(UnSuccessCreateCompany.class);
+
+        Assert.assertEquals("error", unSuccessCreateCompany.getType());
+        Assert.assertEquals(error_message, unSuccessCreateCompany.getMessage());
     }
 }

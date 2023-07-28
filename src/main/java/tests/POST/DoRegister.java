@@ -3,12 +3,11 @@ package tests.POST;
 import environment.environment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.runner.RunWith;
-import request.UserData;
+import request.RegisterData;
 import response.doRegister.UnSuccessRegistration;
 import specifications.Specifications;
 import org.junit.Assert;
@@ -29,7 +28,7 @@ public class DoRegister {
     })
     public void seccessRegTest(String email, String name, String password) {
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
-        UserData user = new UserData(email, name, password);
+        RegisterData user = new RegisterData(email, name, password);
         SuccessRegistration successRegistration = given()
                 .body(user)
                 .when()
@@ -56,7 +55,7 @@ public class DoRegister {
     })
     public void unSuccessRegTest(String email, String name, String password, String errorMessage) {
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
-        UserData user = new UserData(email, name, password);
+        RegisterData user = new RegisterData(email, name, password);
         UnSuccessRegistration unSuccessReg = given()
                 .body(user)
                 .post("doregister")

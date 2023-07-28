@@ -1,5 +1,13 @@
 package tests.GET;
 
-public class MegicSearch {
+import io.restassured.response.Response;
 
+public class MegicSearch {
+//    private static Response responseMegicSearch() {
+//
+//    }
+
+    public void testMegicSearch(){
+
+    }
 }
