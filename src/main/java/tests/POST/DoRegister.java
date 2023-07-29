@@ -1,26 +1,23 @@
 package tests.POST;
 
 import environment.environment;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.runner.RunWith;
 import request.RegisterData;
 import response.doRegister.UnSuccessRegistration;
 import specifications.Specifications;
 import org.junit.Assert;
 import response.doRegister.SuccessRegistration;
-import junitparams.JUnitParamsRunner;
-
 import static io.restassured.RestAssured.given;
 
-@RunWith(JUnitParamsRunner.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
+@Epic("Test API method DoRegister")
 public class DoRegister {
 
-    @DisplayName("Test API method DoRegister (positive)")
+    @Feature("DoRegister (positive)")
     @ParameterizedTest(name = "{index} => email={0}, name={1}, password={2}")
     @CsvSource({
             "verygood@mail.ru, Tur123, 123",
@@ -45,7 +42,7 @@ public class DoRegister {
         Assert.assertEquals("", successRegistration.getHobby());
     }
 
-    @DisplayName("Test API method DoRegister (negative)")
+    @Feature("DoRegister (negative)")
     @ParameterizedTest(name = "{index} => email={0}, name={1}, password={2}, error_message")
     @CsvSource({
             "verygoodmail.ru, Tur123, 123, Некоректныйemailverygoodmail.ru",

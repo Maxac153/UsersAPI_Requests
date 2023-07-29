@@ -2,20 +2,15 @@ package tests.POST;
 
 
 import environment.environment;
-import junitparams.JUnitParamsRunner;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.runner.RunWith;
-import request.RegisterData;
 import request.UserData;
 import response.createUser.SuccessCreateUser;
-import response.doRegister.SuccessRegistration;
-import response.doRegister.UnSuccessRegistration;
+import response.createUser.UnSuccessCreateUser;
 import specifications.Specifications;
 
 import java.util.ArrayList;
@@ -23,21 +18,21 @@ import java.util.ArrayList;
 import static io.restassured.RestAssured.given;
 
 
+@Epic("Test API method CreateUser")
 public class CreateUser {
-    //    @DisplayName("Test API method DoRegister (positive)")
-//    @ParameterizedTest(name = "{index} => email={0}, name={1}, password={2}")
-//    @CsvSource({
-//            "verygood@mail.ru, Tur123, 123",
-//            "vergood@mail.ru, Tur13, 1",
-//    })
-    @Test
-    public void seccessCreateUserTest() {
+
+    @Feature("CreateUser (positive)")
+    @ParameterizedTest(name = "{index} => email={0}, name={1}")
+    @CsvSource({
+            "te1233@il.com, И6sdf4ша"
+    })
+    public void successCreateUserTest(String email, String name) {
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
         ArrayList<Integer> n1 = new ArrayList<>();
-        n1.add(56);
+        n1.add(20);
         ArrayList<Integer> n2 = new ArrayList<>();
-        n2.add(7);
-        UserData user = new UserData("te342@il.com", "И64шка", n1, n2);
+        n2.add(19);
+        UserData user = new UserData(email, name, n1, n2);
         SuccessCreateUser successCreateUser = given()
                 .body(user)
                 .when()
@@ -45,26 +40,32 @@ public class CreateUser {
                 .then().log().all()
                 .extract().as(SuccessCreateUser.class);
 
-        System.out.println(successCreateUser.getDate());
+        Assert.assertEquals(email, successCreateUser.getEmail());
+        Assert.assertEquals(name, successCreateUser.getName());
     }
 
-    @DisplayName("Test API method DoRegister (negative)")
-    @ParameterizedTest(name = "{index} => email={0}, name={1}, password={2}, error_message")
+
+    @Feature("CreateUser (negative)")
+    @ParameterizedTest(name = "{index} => email={0}, name={1}, error_message={2}")
     @CsvSource({
-            "verygoodmail.ru, Tur123, 123, Некоректныйemailverygoodmail.ru",
-            "vergood@mailru, Tur123, 123, Некоректныйemailvergood@mailru",
-            "vergood@mailru, , 123, Параметрnameявляетсяобязательным!",
-            "vergood@mailru, Tur123, , Параметрpasswordявляетсяобязательным!",
+            "verygoodmail.ru, Tur123,  email неправильный!",
+            "vergood@mailru, Tur123, email неправильный!",
+            "vergood@mailru, , Параметр name является обязательным!"
     })
-    public void unSuccessRegTest(String email, String name, String password, String errorMessage) {
+    public void unSuccessCreateUserTest(String email, String name, String errorMessage) {
         Specifications.installSpecification(Specifications.requestSpec(environment.URL), Specifications.responseSpecOK200());
-        RegisterData user = new RegisterData(email, name, password);
-        UnSuccessRegistration unSuccessReg = given()
+        ArrayList<Integer> n1 = new ArrayList<>();
+        n1.add(20);
+        ArrayList<Integer> n2 = new ArrayList<>();
+        n2.add(19);
+        UserData user = new UserData(email, name, n1, n2);
+        UnSuccessCreateUser unSuccessReg = given()
                 .body(user)
                 .post("createuser")
                 .then().log().all()
-                .extract().as(UnSuccessRegistration.class);
+                .extract().as(UnSuccessCreateUser.class);
+
         Assert.assertEquals("error", unSuccessReg.getType());
-        Assert.assertEquals(errorMessage, unSuccessReg.getMessage().replaceAll("\\s", ""));
+        Assert.assertEquals(errorMessage, unSuccessReg.getMessage());
     }
 }

@@ -1,8 +1,9 @@
 package tests.POST;
 
 import environment.environment;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.junit.Assert;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import request.CompanyData;
@@ -14,8 +15,10 @@ import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;
 
+@Epic("Test API method CreateCompany")
 public class CreateCompany {
-    @DisplayName("Test API method CreateCompany (positive)")
+
+    @Feature("CreateCompany (positive)")
     @ParameterizedTest(name = "{index} => company_name={0}, company_type={1}, company_users={2}, email_owner={3}, error_message={4}")
     @CsvSource({
             "Алкоголики и тунедцы, ООО, verygood@mail.ru, aa+1@mail.com",
@@ -37,7 +40,7 @@ public class CreateCompany {
         Assert.assertEquals(company_type, successCreateCompany.getCompany().getType());
     }
 
-    @DisplayName("Test API method CreateCompany (negative)")
+    @Feature("CreateCompany (negative)")
     @ParameterizedTest(name = "{index} => type={0}, message={1}")
     @CsvSource({
             ", ООО, verygood@mail.ru, aa+1@mail.com, Параметр company_name является обязательным!",
